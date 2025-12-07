@@ -76,5 +76,11 @@ echo "  ./scripts/restore_configs.sh $BACKUP_FILE"
 echo ""
 echo "Cleaning old backups (keeping last 10)..."
 cd "$BACKUP_DIR"
-ls -t media-stack-backup_*.tar.gz 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
+backup_count=$(ls -t media-stack-backup_*.tar.gz 2>/dev/null | wc -l)
+if [ "$backup_count" -gt 10 ]; then
+    ls -t media-stack-backup_*.tar.gz | tail -n +11 | while read -r old_backup; do
+        echo "  Removing old backup: $old_backup"
+        rm -f "$old_backup"
+    done
+fi
 echo "Cleanup complete"

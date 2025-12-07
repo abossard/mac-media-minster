@@ -63,6 +63,9 @@ services:
 
   # Plex Media Server
   # Docs: https://docs.linuxserver.io/images/docker-plex/
+  # Note: Using host network mode for Plex to ensure proper device discovery
+  # and DLNA functionality. If you prefer network isolation, you can use
+  # bridge mode with explicit port mappings (see commented section below).
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
@@ -80,6 +83,38 @@ services:
       - ${DATA_PATH}/tv:/tv
       - ${DATA_PATH}/music:/music
       - ${DATA_PATH}/downloads:/downloads
+
+  # Alternative Plex configuration with bridge networking (more secure but may affect discovery):
+  # Uncomment this and comment out the above plex service to use bridge mode
+  # plex-bridge:
+  #   image: lscr.io/linuxserver/plex:latest
+  #   container_name: plex
+  #   restart: unless-stopped
+  #   ports:
+  #     - "32400:32400"   # Plex web UI
+  #     - "1900:1900/udp" # DLNA
+  #     - "3005:3005"     # Plex Companion
+  #     - "5353:5353/udp" # Bonjour/Avahi
+  #     - "8324:8324"     # Roku via Plex Companion
+  #     - "32410:32410/udp" # GDM network discovery
+  #     - "32412:32412/udp" # GDM network discovery
+  #     - "32413:32413/udp" # GDM network discovery
+  #     - "32414:32414/udp" # GDM network discovery
+  #     - "32469:32469"   # Plex DLNA Server
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #     - PLEX_CLAIM=${PLEX_CLAIM}
+  #     - VERSION=docker
+  #   volumes:
+  #     - ${DATA_PATH}/plex-config:/config
+  #     - ${DATA_PATH}/movies:/movies
+  #     - ${DATA_PATH}/tv:/tv
+  #     - ${DATA_PATH}/music:/music
+  #     - ${DATA_PATH}/downloads:/downloads
+  #   networks:
+  #     - media-network
 
   # Navidrome - Modern music server
   # Docs: https://www.navidrome.org/docs/installation/docker/
