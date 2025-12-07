@@ -1,0 +1,123 @@
+version: "3.9"
+
+services:
+  # Transmission - BitTorrent client with web UI
+  # Docs: https://docs.linuxserver.io/images/docker-transmission/
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    restart: unless-stopped
+    ports:
+      - "9091:9091"      # Web UI
+      - "51413:51413"    # TCP
+      - "51413:51413/udp"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/transmission-config:/config
+      - ${DATA_PATH}/downloads:/downloads
+    networks:
+      - media-network
+
+  # Sonarr - TV show automation
+  # Docs: https://docs.linuxserver.io/images/docker-sonarr/
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/sonarr-config:/config
+      - ${DATA_PATH}/tv:/tv
+      - ${DATA_PATH}/downloads:/downloads
+    networks:
+      - media-network
+    depends_on:
+      - transmission
+
+  # Radarr - Movie automation
+  # Docs: https://docs.linuxserver.io/images/docker-radarr/
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/radarr-config:/config
+      - ${DATA_PATH}/movies:/movies
+      - ${DATA_PATH}/downloads:/downloads
+    networks:
+      - media-network
+    depends_on:
+      - transmission
+
+  # Plex Media Server
+  # Docs: https://docs.linuxserver.io/images/docker-plex/
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - VERSION=docker
+    volumes:
+      - ${DATA_PATH}/plex-config:/config
+      - ${DATA_PATH}/movies:/movies
+      - ${DATA_PATH}/tv:/tv
+      - ${DATA_PATH}/music:/music
+      - ${DATA_PATH}/downloads:/downloads
+
+  # Navidrome - Modern music server
+  # Docs: https://www.navidrome.org/docs/installation/docker/
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    restart: unless-stopped
+    ports:
+      - "4533:4533"
+    environment:
+      - ND_LOGLEVEL=info
+      - ND_SESSIONTIMEOUT=24h
+      - ND_BASEURL=/
+    user: "${PUID}:${PGID}"
+    volumes:
+      - ${DATA_PATH}/music:/music:ro
+      - ${DATA_PATH}/navidrome-config:/data
+    networks:
+      - media-network
+
+  # Watchtower - Automatic container updates
+  # Docs: https://containrrr.dev/watchtower/
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_POLL_INTERVAL=86400  # Check daily (in seconds)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - media-network
+
+networks:
+  media-network:
+    driver: bridge
