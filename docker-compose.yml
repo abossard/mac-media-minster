@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # Transmission - BitTorrent client with web UI
   # Docs: https://docs.linuxserver.io/images/docker-transmission/

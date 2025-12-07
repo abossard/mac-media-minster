@@ -45,6 +45,7 @@ check_item() {
 check_version() {
     local name="$1"
     local command="$2"
+    local version
     
     version=$($command 2>&1 || echo "not found")
     if [ "$version" != "not found" ]; then

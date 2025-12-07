@@ -78,8 +78,9 @@ If Docker Desktop isn't installed yet:
 1. Download from: https://docs.docker.com/desktop/setup/install/mac-install/
 2. Install and start Docker Desktop
 3. Complete the first-run wizard
-4. **Important:** In Docker Desktop → Settings → Resources → File Sharing:
-   - Add `/Volumes/space` to allowed paths
+4. **Note:** Modern versions of Docker Desktop automatically share `/Volumes` directories. If you encounter permission issues:
+   - Go to Docker Desktop → Settings → Resources
+   - Verify `/Volumes/space` is accessible or add it if needed
 5. Re-run `./scripts/bootstrap_mac.sh`
 
 ## 📦 What Gets Installed
