@@ -79,6 +79,8 @@ services:
       - ${DATA_PATH}/downloads:/downloads
     networks:
       - media-network
+    depends_on:
+      - transmission
 
   # Plex Media Server
   # Docs: https://docs.linuxserver.io/images/docker-plex/
