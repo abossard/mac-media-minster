@@ -240,7 +240,9 @@ setup_launchagents() {
             dest="$LAUNCH_AGENTS_DIR/$filename"
             
             # Copy and replace placeholder paths
-            sed "s|__SCRIPT_DIR__|$SCRIPT_DIR|g" "$plist" > "$dest"
+            sed -e "s|__SCRIPT_DIR__|$SCRIPT_DIR|g" \
+                -e "s|YOUR_USERNAME|$(whoami)|g" \
+                "$plist" > "$dest"
             
             # Load the launch agent
             launchctl unload "$dest" 2>/dev/null || true

@@ -43,7 +43,19 @@ git clone https://github.com/abossard/mac-media-minster.git
 cd mac-media-minster
 ```
 
-### 3. Run Bootstrap Script
+### 3. Verify Prerequisites (Optional but Recommended)
+
+```bash
+./scripts/verify_setup.sh
+```
+
+This will check:
+- macOS version compatibility
+- External storage availability
+- Required software installation
+- Repository file integrity
+
+### 4. Run Bootstrap Script
 
 ```bash
 ./scripts/bootstrap_mac.sh
@@ -60,7 +72,7 @@ This script will:
 - ✅ Pull and start all Docker containers
 - ✅ Configure auto-start launch agents
 
-### 4. Complete Docker Desktop Setup
+### 5. Complete Docker Desktop Setup
 
 If Docker Desktop isn't installed yet:
 1. Download from: https://docs.docker.com/desktop/setup/install/mac-install/
