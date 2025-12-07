@@ -94,6 +94,7 @@ All containers run via Docker Compose with automatic restart policies:
 | **Transmission** | 9091 | BitTorrent client with web UI | [LinuxServer Docs](https://docs.linuxserver.io/images/docker-transmission/) |
 | **Sonarr** | 8989 | TV show automation | [LinuxServer Docs](https://docs.linuxserver.io/images/docker-sonarr/) |
 | **Radarr** | 7878 | Movie automation | [LinuxServer Docs](https://docs.linuxserver.io/images/docker-radarr/) |
+| **Jackett** | 9117 | Indexer proxy/aggregator | [LinuxServer Docs](https://docs.linuxserver.io/images/docker-jackett/) |
 | **Plex** | 32400 | Media server | [LinuxServer Docs](https://docs.linuxserver.io/images/docker-plex/) |
 | **Navidrome** | 4533 | Modern music server | [Navidrome Docs](https://www.navidrome.org/docs/installation/docker/) |
 | **Watchtower** | - | Auto-updates containers | [Watchtower Docs](https://containrrr.dev/watchtower/) |
@@ -112,6 +113,7 @@ On `/Volumes/space`:
 ├── transmission-config/    # Transmission configuration
 ├── sonarr-config/         # Sonarr configuration
 ├── radarr-config/         # Radarr configuration
+├── jackett-config/        # Jackett configuration
 ├── plex-config/           # Plex configuration
 ├── navidrome-config/      # Navidrome configuration
 └── lmstudio/              # LM Studio models & config (optional)
@@ -160,6 +162,7 @@ Once running, access your services at:
 - **Transmission:** http://localhost:9091
 - **Sonarr:** http://localhost:8989
 - **Radarr:** http://localhost:7878
+- **Jackett:** http://localhost:9117
 - **Plex:** http://localhost:32400/web
 - **Navidrome:** http://localhost:4533
 
@@ -189,7 +192,17 @@ Once running, access your services at:
 3. Add indexers in Settings → Indexers
 4. Add root folder: `/movies`
 
-#### 4. Plex Media Server
+#### 4. Jackett (Indexer Proxy)
+1. Open http://localhost:9117
+2. Add indexers by clicking "Add indexer"
+3. Configure each indexer with your credentials/settings
+4. Copy the Torznab Feed URL for each indexer
+5. Add Jackett indexers to Sonarr and Radarr:
+   - In Sonarr/Radarr: Settings → Indexers → Add → Torznab → Custom
+   - Use the Torznab Feed URL from Jackett
+   - Copy the API Key from Jackett (top right corner)
+
+#### 5. Plex Media Server
 1. Open http://localhost:32400/web
 2. Sign in with your Plex account
 3. Add libraries:
@@ -197,7 +210,7 @@ Once running, access your services at:
    - TV Shows: `/tv`
    - Music: `/music`
 
-#### 5. Navidrome (Music)
+#### 6. Navidrome (Music)
 1. Open http://localhost:4533
 2. Create admin account on first run
 3. Music library is automatically scanned from `/music`

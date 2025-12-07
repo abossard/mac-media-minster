@@ -61,6 +61,25 @@ services:
     depends_on:
       - transmission
 
+  # Jackett - Indexer proxy/aggregator
+  # Docs: https://docs.linuxserver.io/images/docker-jackett/
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    restart: unless-stopped
+    ports:
+      - "9117:9117"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - AUTO_UPDATE=true
+    volumes:
+      - ${DATA_PATH}/jackett-config:/config
+      - ${DATA_PATH}/downloads:/downloads
+    networks:
+      - media-network
+
   # Plex Media Server
   # Docs: https://docs.linuxserver.io/images/docker-plex/
   # Note: Using host network mode for Plex to ensure proper device discovery
